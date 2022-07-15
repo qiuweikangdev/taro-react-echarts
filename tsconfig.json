@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "es2015",
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "noUnusedParameters": false,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "rootDir": "src",  // 用来控制输出的目录结构 --outDir。
+    "jsx": "react-jsx",
+    "typeRoots": [
+      "node_modules/@types",
+      "global.d.ts"
+    ],
+    "paths": {
+      "@/types/*": ["./@types/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/pages/*": ["./src/pages/*"],
+    }
+  },
+  "compileOnSave": false,
+  "exclude": [
+    "node_modules/**/*",
+    "dist/*",
+    "src/app.ts",
+    "src/app.config.ts"
+  ],
+  "include": [
+    "src/**/*"
+  ],
+}

@@ -1,0 +1,9 @@
+{
+  "extends": ["taro/react"],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off",
+    "quotes": ["error", "single"],
+    "jsx-quotes": ["error", "prefer-single"]
+  }
+}
