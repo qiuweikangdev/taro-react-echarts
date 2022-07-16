@@ -3,7 +3,7 @@ import Echarts from './components/echarts'
 export type {
   EChartsReactProps,
   Opts,
-  InitEchart,
+  InitEchart
 } from './components/echarts/types'
 
 export default Echarts

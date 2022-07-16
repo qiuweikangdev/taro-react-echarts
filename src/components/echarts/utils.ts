@@ -1,18 +1,18 @@
 export function isString(v) {
-  return typeof v === "string";
+  return typeof v === 'string';
 }
 
 export function isFunction(v) {
-  return typeof v === "function";
+  return typeof v === 'function';
 }
 
 export function isEqual(x, y) {
   if (x === y) {
     return true;
   } else if (
-    typeof x === "object" &&
+    typeof x === 'object' &&
     x !== null &&
-    typeof y === "object" &&
+    typeof y === 'object' &&
     y !== null
   ) {
     const keysX = Object.keys(x);
@@ -40,13 +40,13 @@ export function pick(obj, keys) {
 }
 
 const idCounter = {};
-export function uniqueId(prefix = "$unique$") {
+export function uniqueId(prefix = '$unique$') {
   if (!idCounter[prefix]) {
     idCounter[prefix] = 0;
   }
 
   const id = ++idCounter[prefix];
-  if (prefix === "$unique$") {
+  if (prefix === '$unique$') {
     return `${id}`;
   }
 
@@ -54,15 +54,15 @@ export function uniqueId(prefix = "$unique$") {
 }
 
 export function compareVersion(v1, v2) {
-  v1 = v1.split(".");
-  v2 = v2.split(".");
+  v1 = v1.split('.');
+  v2 = v2.split('.');
   const len = Math.max(v1.length, v2.length);
 
   while (v1.length < len) {
-    v1.push("0");
+    v1.push('0');
   }
   while (v2.length < len) {
-    v2.push("0");
+    v2.push('0');
   }
 
   for (let i = 0; i < len; i++) {

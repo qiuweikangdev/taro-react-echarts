@@ -1,3 +1,4 @@
+import { CanvasProps } from '@tarojs/components/types/Canvas';
 import { CSSProperties } from 'react';
 
 export type EChartsInstance = any;
@@ -9,9 +10,8 @@ export type Opts = {
   height?: number | string | undefined;
 };
 
-export type EChartsReactProps = {
-  echarts:any;
-  canvasId?: string;
+export type EChartsReactProps = Omit<CanvasProps,'style'> & {
+  echarts: any;
   className?: string;
   style?: CSSProperties;
   option: any;
@@ -29,8 +29,8 @@ export type EChartsReactProps = {
 };
 
 export type InitEchart = {
-    dom: HTMLDivElement | HTMLCanvasElement;
-    devicePixelRatio: number | undefined;
-    width: number | string | undefined;
-    height: number | string | undefined;
-}
+  dom: HTMLDivElement | HTMLCanvasElement;
+  devicePixelRatio: number | undefined;
+  width: number | string | undefined;
+  height: number | string | undefined;
+};

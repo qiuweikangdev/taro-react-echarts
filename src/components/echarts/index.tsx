@@ -19,9 +19,10 @@ const Echarts: FC<EChartsReactProps> = ({
   ...props
 }) => {
   const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>(null);
-  const canvasId = useMemo(() => pCanvasId || uniqueId('canvas_'), [pCanvasId]);
   const [isInitialResize, setIsInitialResize] = useState<boolean>(true);
   const prevProps = usePrevious<EChartsReactProps>(props);
+  const canvasId = useMemo(() => pCanvasId || uniqueId('canvas_'), [pCanvasId]);
+  const canvasProps = useMemo(() =>  ['disableScroll','disableScroll','onTouchStart','onTouchMove','onTouchEnd','onTouchCancel','onLongTap','onError','nativeProps','className','key','id','hidden','animation'],[]);
 
   useMount(() => {
     nextTick(() => {
@@ -248,7 +249,6 @@ const Echarts: FC<EChartsReactProps> = ({
       }
     }
   };
-
   return (
     <Canvas
       type='2d'
@@ -256,6 +256,7 @@ const Echarts: FC<EChartsReactProps> = ({
       canvasId={canvasId}
       style={{ width: '100%', height: '300px', ...props.style }}
       ref={canvasRef}
+      {...pick(props,canvasProps)}
     />
   );
 };

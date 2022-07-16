@@ -1,38 +1,21 @@
-import Echarts from '../../components/echarts';
+import Echarts from '../../components/echarts'
 import echarts from '../../assets/js/echarts.js'
 
 export default function Demo() {
-
- const option = {
-    legend: {
-      top: 50,
-      left: 'center',
-      z: 100
-    },
-    tooltip: {
-      trigger: 'axis',
-      show: true,
-      confine: true
-    },
+  const option = {
     xAxis: {
       type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
     },
     series: [
       {
-        data: [150, 230, 224, 218, 135, 147, 260],
-        type: 'line'
-      }
-    ]
+        data: [120, 200, 150, 80, 70, 110, 130],
+        type: 'bar',
+      },
+    ],
   }
-
-  return (
-      <Echarts
-        echarts={echarts}
-        option={option}
-      ></Echarts>
-  );
+  return <Echarts echarts={echarts} option={option}></Echarts>
 }
