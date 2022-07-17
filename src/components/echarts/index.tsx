@@ -71,7 +71,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
   }, [props])
 
   // 大小变化
-  const resize = (canvas) => {
+  const resize = canvas => {
     const echartsInstance = echarts.getInstanceByDom(canvas)
     // 调整大小不应在第一次渲染时发生，因为它会取消初始 echarts 动画
     if (!isInitialResize) {
@@ -86,7 +86,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
 
   const initEchartsInstance = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
     const { theme, opts } = props
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const charts = echarts.init(dom, theme, {
         width,
         height,
@@ -143,7 +143,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
   const bindEvents = (instance, events) => {
     function _bindEvent(eventName, func) {
       if (isString(eventName) && isFunction(func)) {
-        instance.on(eventName, (param) => {
+        instance.on(eventName, param => {
           func(param, instance)
         })
       }
@@ -180,7 +180,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     query
       .select(`#${canvasId}`)
       .fields({ node: true, size: true })
-      .exec((res) => {
+      .exec(res => {
         const [result] = res
         if (result) {
           const { node, width, height } = result || {}
@@ -227,7 +227,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
   }
   return (
     <Canvas
-      type="2d"
+      type='2d'
       id={canvasId}
       canvasId={canvasId}
       style={{ width: '100%', height: '300px', ...props.style }}
