@@ -1,62 +1,60 @@
-import Taro, { nextTick } from '@tarojs/taro';
-import { Canvas } from '@tarojs/components';
-import { useEffect, useRef, useState, useMemo, FC } from 'react';
-import {
-  isString,
-  isFunction,
-  isEqual,
-  pick,
-  uniqueId,
-  compareVersion
-} from './utils';
-import WxCanvas from './wx-canvas';
-import { usePrevious, useMount } from '../../hooks';
-import { EChartsReactProps, InitEchart } from './types';
+import Taro, { nextTick } from '@tarojs/taro'
+import { Canvas } from '@tarojs/components'
+import { useEffect, useRef, useState, useMemo, FC } from 'react'
+import { isString, isFunction, isEqual, pick, uniqueId, compareVersion } from './utils'
+import WxCanvas from './wx-canvas'
+import { usePrevious, useMount, useUnMount } from '../../hooks'
+import { EChartsReactProps, InitEchart } from './types'
 
-const Echarts: FC<EChartsReactProps> = ({
-  echarts,
-  canvasId: pCanvasId,
-  ...props
-}) => {
-  const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>(null);
-  const [isInitialResize, setIsInitialResize] = useState<boolean>(true);
-  const prevProps = usePrevious<EChartsReactProps>(props);
-  const canvasId = useMemo(() => pCanvasId || uniqueId('canvas_'), [pCanvasId]);
-  const canvasProps = useMemo(() =>  ['disableScroll','disableScroll','onTouchStart','onTouchMove','onTouchEnd','onTouchCancel','onLongTap','onError','nativeProps','className','key','id','hidden','animation'],[]);
+const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props }) => {
+  const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>(null)
+  const [isInitialResize, setIsInitialResize] = useState<boolean>(true)
+  const prevProps = usePrevious<EChartsReactProps>(props)
+  const canvasId = useMemo(() => pCanvasId || uniqueId('canvas_'), [pCanvasId])
+  const canvasProps = useMemo(
+    () => [
+      'disableScroll',
+      'disableScroll',
+      'onTouchStart',
+      'onTouchMove',
+      'onTouchEnd',
+      'onTouchCancel',
+      'onLongTap',
+      'onError',
+      'nativeProps',
+      'className',
+      'key',
+      'id',
+      'hidden',
+      'animation',
+    ],
+    [],
+  )
 
   useMount(() => {
     nextTick(() => {
-      initChart();
-    });
-  });
+      initChart()
+    })
+  })
+
+  useUnMount(() => {
+    dispose()
+  })
 
   useEffect(() => {
-    // 以下属性修改的时候，需要 dispose 之后再新建
-    // 1. 切换 theme 的时候
-    // 2. 修改 opts 的时候
-    // 3. 修改 onEvents 的时候，这样可以取消所有之前绑定的事件
-    if (
-      !isEqual(prevProps?.theme, props?.theme) ||
-      !isEqual(prevProps?.option, props?.option) ||
-      !isEqual(prevProps?.onEvents, props?.onEvents)
-    ) {
-      // 重建
-      dispose();
-      initChart();
-      return;
-    }
-
     const pickKeys = [
+      'theme',
       'option',
+      'onEvents',
       'notMerge',
       'lazyUpdate',
       'showLoading',
-      'loadingOption'
-    ];
+      'loadingOption',
+    ]
     if (!isEqual(pick(props, pickKeys), pick(prevProps, pickKeys))) {
-      if (canvasRef.current) {
-        updateEChartsOption({ dom: canvasRef.current });
-      }
+      // 需要销毁后重新实例化
+      dispose()
+      initChart()
     }
 
     /**
@@ -66,74 +64,57 @@ const Echarts: FC<EChartsReactProps> = ({
       !isEqual(prevProps?.style, props.style) ||
       !isEqual(prevProps?.className, props.className)
     ) {
-      resize(canvasRef.current);
+      resize(canvasRef.current)
     }
-    return () => {
-      dispose();
-    };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prevProps]);
+  }, [props])
 
   // 大小变化
-  const resize = canvas => {
-    const echartsInstance = echarts.getInstanceByDom(canvas);
+  const resize = (canvas) => {
+    const echartsInstance = echarts.getInstanceByDom(canvas)
     // 调整大小不应在第一次渲染时发生，因为它会取消初始 echarts 动画
     if (!isInitialResize) {
       try {
-        echartsInstance.resize({
-          width: 'auto',
-          height: 'auto'
-        });
+        echartsInstance.resize({ width: 'auto', height: 'auto' })
       } catch (e) {
-        console.warn(e);
+        console.warn(e)
       }
     }
-    setIsInitialResize(false);
-  };
+    setIsInitialResize(false)
+  }
 
-  const initEchartsInstance = async ({
-    dom,
-    width,
-    height,
-    devicePixelRatio
-  }: InitEchart) => {
-    const { theme, opts } = props;
-    return new Promise(resolve => {
+  const initEchartsInstance = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
+    const { theme, opts } = props
+    return new Promise((resolve) => {
       const charts = echarts.init(dom, theme, {
         width,
         height,
         devicePixelRatio,
-        ...opts
-      });
+        ...opts,
+      })
       if (Taro.getEnv() === Taro.ENV_TYPE.WEB) {
-        echarts.init(dom, theme, {
-          width,
-          height,
-          devicePixelRatio,
-          ...opts
-        });
         /**
          * echart同一个dom下多次动态渲染值，防止值、事件重复互相影响
          * 每次init之后，先dispose释放下资源，再重新init
          */
-        const echartsInstance = echarts.getInstanceByDom(dom);
+        const echartsInstance = echarts.getInstanceByDom(dom)
         echartsInstance.on('finished', () => {
-          echarts.dispose(dom);
+          echarts.dispose(dom)
           // 获取渲染后的width、height
           const newOpts = {
             width: dom.clientWidth,
             height: dom.clientHeight,
             devicePixelRatio,
-            ...opts
-          };
-          resolve(echarts.init(dom, theme, newOpts));
-        });
+            ...opts,
+          }
+          resolve(echarts.init(dom, theme, newOpts))
+        })
       } else {
-        resolve(charts);
+        resolve(charts)
       }
-    });
-  };
+    })
+  }
 
   const updateEChartsOption = ({ dom }: Pick<InitEchart, 'dom'>) => {
     /**
@@ -144,120 +125,115 @@ const Echarts: FC<EChartsReactProps> = ({
       notMerge = true, // 不跟之前设置的option合并，保证每次渲染都是最新的option
       lazyUpdate = false, // 设置完 option 后是否不立即更新图表，默认为 false，即同步立即更新。如果为 true，则会在下一个 animation frame 中，才更新图表
       showLoading,
-      loadingOption = null
-    } = props;
+      loadingOption = null,
+    } = props
     // 1. 获取echarts实例
-    // const echartInstance = getEchartsInstance()
-    const echartInstance = echarts.getInstanceByDom(dom);
-    // 2. 设置option
-    echartInstance.setOption(option, notMerge, lazyUpdate);
-    // chart.current.setOption(option, notMerge, lazyUpdate)
-    // 3. 显示加载动画效果
-    if (showLoading) echartInstance.showLoading(loadingOption);
-    else echartInstance.hideLoading();
+    const echartInstance = echarts.getInstanceByDom(dom)
+    if (echartInstance) {
+      // 2. 设置option
+      echartInstance.hideLoading()
+      echartInstance.setOption(option, notMerge, lazyUpdate)
+      // 3. 显示加载动画效果
+      if (showLoading) echartInstance.showLoading(loadingOption)
+    }
 
-    return echartInstance;
-  };
+    return echartInstance
+  }
 
   const bindEvents = (instance, events) => {
     function _bindEvent(eventName, func) {
       if (isString(eventName) && isFunction(func)) {
-        instance.on(eventName, param => {
-          func(param, instance);
-        });
+        instance.on(eventName, (param) => {
+          func(param, instance)
+        })
       }
     }
 
     // loop and bind
     for (const eventName in events) {
       if (Object.prototype.hasOwnProperty.call(events, eventName)) {
-        _bindEvent(eventName, events[eventName]);
+        _bindEvent(eventName, events[eventName])
       }
     }
-  };
+  }
 
-  const renderEcharts = async ({
-    dom,
-    width,
-    height,
-    devicePixelRatio
-  }: InitEchart) => {
-    const { onEvents, onChartReady } = props;
+  const renderEcharts = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
+    const { onEvents, onChartReady } = props
     // 1. 初始化图表
-    await initEchartsInstance({ dom, width, height, devicePixelRatio });
+    await initEchartsInstance({ dom, width, height, devicePixelRatio })
     // 2. 更新echarts实例
-    const echartsInstance = updateEChartsOption({ dom });
-    //3. 绑定事件
-    bindEvents(echartsInstance, onEvents || {});
+    const echartsInstance = updateEChartsOption({ dom })
+    // 3. 绑定事件
+    bindEvents(echartsInstance, onEvents || {})
     // 4. 图表渲染完成
-    if (isFunction(onChartReady)) onChartReady?.(echartsInstance);
-  };
+    if (isFunction(onChartReady)) onChartReady?.(echartsInstance)
+  }
 
   const dispose = () => {
     // 销毁echarts实例
-    echarts?.dispose(canvasRef.current);
-  };
+    echarts?.dispose(canvasRef.current)
+  }
 
   // 初始化微信小程序图表
   const initWexinChart = () => {
-    const query = Taro.createSelectorQuery();
+    const query = Taro.createSelectorQuery()
     query
       .select(`#${canvasId}`)
       .fields({ node: true, size: true })
-      .exec(res => {
-        const [result] = res;
+      .exec((res) => {
+        const [result] = res
         if (result) {
-          const { node, width, height } = result || {};
-          const canvasNode = node;
-          const canvasDpr = Taro.getSystemInfoSync().pixelRatio;
-          const ctx = canvasNode.getContext('2d');
-          const canvas = new WxCanvas(ctx, true, canvasNode);
+          const { node, width, height } = result || {}
+          const canvasNode = node
+          const canvasDpr = Taro.getSystemInfoSync().pixelRatio
+          const ctx = canvasNode.getContext('2d')
+          const canvas = new WxCanvas(ctx, true, canvasNode)
           echarts?.setCanvasCreator(() => {
-            return canvas;
-          });
-          canvasRef.current = canvas as any;
+            return canvas
+          })
+          canvasRef.current = canvas as any
           renderEcharts({
             dom: (canvas as unknown) as HTMLDivElement | HTMLCanvasElement,
             width,
             height,
-            devicePixelRatio: canvasDpr
-          });
+            devicePixelRatio: canvasDpr,
+          })
         }
-      });
-  };
+      })
+  }
 
   const initChart = () => {
     if (Taro.getEnv() === Taro.ENV_TYPE.WEB && canvasRef.current) {
-      const width = canvasRef.current?.clientWidth;
-      const height = canvasRef.current?.clientHeight;
-      canvasRef.current = canvasRef.current;
+      const width = canvasRef.current?.clientWidth
+      const height = canvasRef.current?.clientHeight
+      canvasRef.current = canvasRef.current
       renderEcharts({
         dom: canvasRef.current,
         width,
         height,
-        devicePixelRatio: window.devicePixelRatio
-      });
+        devicePixelRatio: window.devicePixelRatio,
+      })
     } else {
-      const version = Taro.getSystemInfoSync().SDKVersion;
-      const canUseNewCanvas = compareVersion(version, '2.9.0') >= 0;
+      const version = Taro.getSystemInfoSync().SDKVersion
+      const canUseNewCanvas = compareVersion(version, '2.9.0') >= 0
       if (canUseNewCanvas) {
         // console.log('微信基础库版本大于2.9.0，开始使用<canvas type="2d"/>');
         // 2.9.0 可以使用 <canvas type="2d"></canvas>
-        initWexinChart();
+        initWexinChart()
       } else {
-        console.error('微信基础库版本过低，需大于等于 2.9.0');
+        console.error('微信基础库版本过低，需大于等于 2.9.0')
       }
     }
-  };
+  }
   return (
     <Canvas
-      type='2d'
+      type="2d"
       id={canvasId}
       canvasId={canvasId}
       style={{ width: '100%', height: '300px', ...props.style }}
       ref={canvasRef}
-      {...pick(props,canvasProps)}
+      {...pick(props, canvasProps)}
     />
-  );
-};
-export default Echarts;
+  )
+}
+export default Echarts
