@@ -1,9 +1,9 @@
-import Taro, { nextTick } from '@tarojs/taro'
+import Taro, { nextTick, useReady } from '@tarojs/taro'
 import { Canvas } from '@tarojs/components'
-import { useEffect, useRef, useState, useMemo, FC } from 'react'
+import { useRef, useState, useMemo, FC } from 'react'
 import { isString, isFunction, isEqual, pick, uniqueId, compareVersion } from './utils'
 import WxCanvas from './wx-canvas'
-import { usePrevious, useMount, useUnMount } from '../../hooks'
+import { usePrevious, useUnMount, useUpdateEffect } from '../../hooks'
 import { EChartsReactProps, InitEchart } from './types'
 
 const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props }) => {
@@ -31,7 +31,11 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     [],
   )
 
-  useMount(() => {
+  /**
+   * issues: https://github.com/NervJS/taro/issues/7116
+   * 获取小程序渲染层的节点要在 onReady 生命周期，等同于 useReady hooks
+   */
+  useReady(() => {
     nextTick(() => {
       initChart()
     })
@@ -41,7 +45,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     dispose()
   })
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     const pickKeys = [
       'theme',
       'option',
@@ -66,8 +70,6 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     ) {
       resize(canvasRef.current)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props])
 
   // 大小变化
@@ -76,7 +78,10 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     // 调整大小不应在第一次渲染时发生，因为它会取消初始 echarts 动画
     if (!isInitialResize) {
       try {
-        echartsInstance.resize({ width: 'auto', height: 'auto' })
+        echartsInstance.resize({
+          width: 'auto',
+          height: 'auto',
+        })
       } catch (e) {
         console.warn(e)
       }
@@ -87,6 +92,14 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
   const initEchartsInstance = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
     const { theme, opts } = props
     return new Promise(resolve => {
+      const query = Taro.createSelectorQuery()
+      query
+        .select(`#${canvasId}`)
+        .boundingClientRect()
+        .exec(res => {
+          console.log(res, 'res')
+        })
+
       const charts = echarts.init(dom, theme, {
         width,
         height,
@@ -131,15 +144,16 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     const echartInstance = echarts.getInstanceByDom(dom)
     if (echartInstance) {
       // 2. 设置option
-      echartInstance.hideLoading()
       echartInstance.setOption(option, notMerge, lazyUpdate)
       // 3. 显示加载动画效果
       if (showLoading) echartInstance.showLoading(loadingOption)
+      else echartInstance.hideLoading()
     }
 
     return echartInstance
   }
 
+  // 绑定事件
   const bindEvents = (instance, events) => {
     function _bindEvent(eventName, func) {
       if (isString(eventName) && isFunction(func)) {
@@ -149,7 +163,6 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
       }
     }
 
-    // loop and bind
     for (const eventName in events) {
       if (Object.prototype.hasOwnProperty.call(events, eventName)) {
         _bindEvent(eventName, events[eventName])
@@ -157,20 +170,28 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     }
   }
 
+  // 渲染图表
   const renderEcharts = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
     const { onEvents, onChartReady } = props
     // 1. 初始化图表
-    await initEchartsInstance({ dom, width, height, devicePixelRatio })
+    await initEchartsInstance({
+      dom,
+      width,
+      height,
+      devicePixelRatio,
+    })
     // 2. 更新echarts实例
-    const echartsInstance = updateEChartsOption({ dom })
+    const echartsInstance = updateEChartsOption({
+      dom,
+    })
     // 3. 绑定事件
     bindEvents(echartsInstance, onEvents || {})
     // 4. 图表渲染完成
     if (isFunction(onChartReady)) onChartReady?.(echartsInstance)
   }
 
+  // 销毁echarts实例
   const dispose = () => {
-    // 销毁echarts实例
     echarts?.dispose(canvasRef.current)
   }
 
@@ -179,7 +200,10 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     const query = Taro.createSelectorQuery()
     query
       .select(`#${canvasId}`)
-      .fields({ node: true, size: true })
+      .fields({
+        node: true,
+        size: true,
+      })
       .exec(res => {
         const [result] = res
         if (result) {
@@ -202,6 +226,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
       })
   }
 
+  // 初始化图表
   const initChart = () => {
     if (Taro.getEnv() === Taro.ENV_TYPE.WEB && canvasRef.current) {
       const width = canvasRef.current?.clientWidth
@@ -230,7 +255,11 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
       type='2d'
       id={canvasId}
       canvasId={canvasId}
-      style={{ width: '100%', height: '300px', ...props.style }}
+      style={{
+        width: '100%',
+        height: '300px',
+        ...props.style,
+      }}
       ref={canvasRef}
       {...pick(props, canvasProps)}
     />
