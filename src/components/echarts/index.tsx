@@ -1,15 +1,15 @@
 import Taro, { nextTick, useReady } from '@tarojs/taro'
 import { Canvas } from '@tarojs/components'
-import { useRef, useState, useMemo, FC } from 'react'
+import { useRef, useState, useMemo, FC, memo } from 'react'
 import { isString, isFunction, isEqual, pick, uniqueId, compareVersion } from './utils'
 import WxCanvas from './wx-canvas'
 import { usePrevious, useUnMount, useUpdateEffect } from '../../hooks'
-import { EChartsReactProps, InitEchart } from './types'
+import { EChartsProps, InitEchart } from './types'
 
-const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props }) => {
+const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) => {
   const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>(null)
   const [isInitialResize, setIsInitialResize] = useState<boolean>(true)
-  const prevProps = usePrevious<EChartsReactProps>(props)
+  const prevProps = usePrevious<EChartsProps>(props)
   const canvasId = useMemo(() => pCanvasId || uniqueId('canvas_'), [pCanvasId])
   const canvasProps = useMemo(
     () => [
@@ -73,7 +73,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
   }, [props])
 
   // 大小变化
-  const resize = canvas => {
+  const resize = (canvas) => {
     const echartsInstance = echarts.getInstanceByDom(canvas)
     // 调整大小不应在第一次渲染时发生，因为它会取消初始 echarts 动画
     if (!isInitialResize) {
@@ -91,12 +91,12 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
 
   const initEchartsInstance = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
     const { theme, opts } = props
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const query = Taro.createSelectorQuery()
       query
         .select(`#${canvasId}`)
         .boundingClientRect()
-        .exec(res => {
+        .exec((res) => {
           console.log(res, 'res')
         })
 
@@ -157,7 +157,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
   const bindEvents = (instance, events) => {
     function _bindEvent(eventName, func) {
       if (isString(eventName) && isFunction(func)) {
-        instance.on(eventName, param => {
+        instance.on(eventName, (param) => {
           func(param, instance)
         })
       }
@@ -204,7 +204,7 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
         node: true,
         size: true,
       })
-      .exec(res => {
+      .exec((res) => {
         const [result] = res
         if (result) {
           const { node, width, height } = result || {}
@@ -265,4 +265,4 @@ const Echarts: FC<EChartsReactProps> = ({ echarts, canvasId: pCanvasId, ...props
     />
   )
 }
-export default Echarts
+export default memo(Echarts)

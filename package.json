@@ -1,6 +1,6 @@
 {
   "name": "taro-react-echarts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "taro图表",
   "templateInfo": {
     "name": "default",
@@ -19,7 +19,7 @@
   ],
   "source": "src/index.ts",
   "main": "dist/index.js",
-  "umd": "dist/index.umd.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"

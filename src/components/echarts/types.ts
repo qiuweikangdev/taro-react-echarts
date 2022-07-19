@@ -1,36 +1,36 @@
-import { CanvasProps } from '@tarojs/components/types/Canvas';
-import { CSSProperties } from 'react';
+import { CanvasProps } from '@tarojs/components/types/Canvas'
+import { CSSProperties } from 'react'
 
-export type EChartsInstance = any;
+export type EChartsInstance = any
 
 export type Opts = {
-  devicePixelRatio?: number | undefined;
-  renderer?: string | undefined;
-  width?: number | string | undefined;
-  height?: number | string | undefined;
-};
+  devicePixelRatio?: number | undefined
+  renderer?: string | undefined
+  width?: number | string | undefined
+  height?: number | string | undefined
+}
 
-export type EChartsReactProps = Omit<CanvasProps,'style'> & {
-  echarts: any;
-  className?: string;
-  style?: CSSProperties;
-  option: any;
-  theme?: string | Record<string, any>;
-  notMerge?: boolean;
-  lazyUpdate?: boolean;
-  showLoading?: boolean;
-  loadingOption?: any;
+export type EChartsProps = Omit<CanvasProps, 'style'> & {
+  echarts: any
+  className?: string
+  style?: CSSProperties
+  option: any
+  theme?: string | Record<string, any>
+  notMerge?: boolean
+  lazyUpdate?: boolean
+  showLoading?: boolean
+  loadingOption?: any
   /**
    *  https://echarts.apache.org/zh/api.html#echarts.init
    */
-  opts?: Opts;
-  onChartReady?: (instance: EChartsInstance) => void;
-  onEvents?: Record<string, Function>;
-};
+  opts?: Opts
+  onChartReady?: (instance: EChartsInstance) => void
+  onEvents?: Record<string, Function>
+}
 
 export type InitEchart = {
-  dom: HTMLDivElement | HTMLCanvasElement;
-  devicePixelRatio: number | undefined;
-  width: number | string | undefined;
-  height: number | string | undefined;
-};
+  dom: HTMLDivElement | HTMLCanvasElement
+  devicePixelRatio: number | undefined
+  width: number | string | undefined
+  height: number | string | undefined
+}
