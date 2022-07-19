@@ -92,14 +92,6 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
   const initEchartsInstance = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
     const { theme, opts } = props
     return new Promise((resolve) => {
-      const query = Taro.createSelectorQuery()
-      query
-        .select(`#${canvasId}`)
-        .boundingClientRect()
-        .exec((res) => {
-          console.log(res, 'res')
-        })
-
       const charts = echarts.init(dom, theme, {
         width,
         height,
@@ -116,8 +108,8 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
           echarts.dispose(dom)
           // 获取渲染后的width、height
           const newOpts = {
-            width: dom.clientWidth,
-            height: dom.clientHeight,
+            width,
+            height,
             devicePixelRatio,
             ...opts,
           }
@@ -250,6 +242,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
       }
     }
   }
+
   return (
     <Canvas
       type='2d'
