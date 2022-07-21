@@ -24,7 +24,6 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
       'nativeProps',
       'className',
       'key',
-      'id',
       'hidden',
       'animation',
     ],
