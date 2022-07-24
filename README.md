@@ -29,7 +29,7 @@ import Echarts from 'taro-react-echarts'
 | 参数              | 描述                                                                                 | 类型      | 必传  | 默认值               |
 | --------------- | ---------------------------------------------------------------------------------- | ------- | --- | ----------------- |
 | 本身参数            | 参考[Canvas](https://taro-docs.jd.com/taro/docs/components/canvas/)                  |         |     |                   |
-| `echarts`       | echarts对象，可自定义构建                                                                   | echarts | 是   |                   |
+| `echarts`       | echarts对象，可[自定义构建](https://echarts.apache.org/zh/builder.html)                                                                   | echarts | 是   |                   |
 | `option`        | 参考[setOption](https://echarts.apache.org/zh/option.html#title)                     | object  | 是   |                   |
 | `className`     | echarts类名                                                                          | string  | 否   | `key`             |
 | `style`         | echarts样式对象                                                                        | object  | 否   | {height: '300px'} |
@@ -51,8 +51,8 @@ import Echarts from 'taro-react-echarts'
 # 使用
 
 ```js
-import Echarts from '../../components/echarts';
-import echarts from '../../assets/js/echarts.js'
+import Echarts from 'taro-react-echarts';
+import echarts from '@/assets/js/echarts.js'
 
 export default function Demo() {
 
