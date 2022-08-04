@@ -222,7 +222,6 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
     if (Taro.getEnv() === Taro.ENV_TYPE.WEB && canvasRef.current) {
       const width = canvasRef.current?.clientWidth
       const height = canvasRef.current?.clientHeight
-      canvasRef.current = canvasRef.current
       renderEcharts({
         dom: canvasRef.current,
         width,
@@ -237,7 +236,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
         // 2.9.0 可以使用 <canvas type="2d"></canvas>
         initWexinChart()
       } else {
-        console.error('微信基础库版本过低，需大于等于 2.9.0')
+        console.error(`当前基础库为${version}, 微信基础库版本过低，需大于等于 2.9.0`)
       }
     }
   }

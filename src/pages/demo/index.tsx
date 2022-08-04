@@ -1,8 +1,9 @@
+import { EChartOption } from '../../components/echarts/types'
 import Echarts from '../../components/echarts'
 import echarts from '../../assets/js/echarts.js'
 
 export default function Demo() {
-  const option = {
+  const option: EChartOption = {
     xAxis: {
       type: 'category',
       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

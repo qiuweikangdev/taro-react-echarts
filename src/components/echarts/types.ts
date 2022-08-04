@@ -1,7 +1,9 @@
 import { CanvasProps } from '@tarojs/components/types/Canvas'
+import { EChartOption, EChartsLoadingOption } from 'echarts'
+import { EChartsInstance } from 'index'
 import { CSSProperties } from 'react'
 
-export type EChartsInstance = any
+export type { EChartOption, ECharts as EChartsInstance, EChartsLoadingOption } from 'echarts'
 
 export type Opts = {
   devicePixelRatio?: number | undefined
@@ -14,12 +16,12 @@ export type EChartsProps = Omit<CanvasProps, 'style'> & {
   echarts: any
   className?: string
   style?: CSSProperties
-  option: any
+  option: EChartOption
   theme?: string | Record<string, any>
   notMerge?: boolean
   lazyUpdate?: boolean
   showLoading?: boolean
-  loadingOption?: any
+  loadingOption?: EChartsLoadingOption
   /**
    *  https://echarts.apache.org/zh/api.html#echarts.init
    */
