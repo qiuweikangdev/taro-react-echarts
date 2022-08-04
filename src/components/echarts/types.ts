@@ -27,7 +27,7 @@ export type EChartsProps = Omit<CanvasProps, 'style'> & {
    */
   opts?: Opts
   onChartReady?: (instance: EChartsInstance) => void
-  onEvents?: Record<string, Function>
+  onEvents?: Record<string, (...args: any[]) => void>
 }
 
 export type InitEchart = {

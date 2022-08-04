@@ -18,5 +18,5 @@ export default function Demo() {
       },
     ],
   }
-  return <Echarts echarts={echarts} option={option}></Echarts>
+  return <Echarts echarts={echarts} option={option} />
 }

@@ -1,9 +1,9 @@
-import { Component } from 'react';
+import { Component } from 'react'
 
 class App extends Component {
   render() {
-    return this.props.children;
+    return this.props.children
   }
 }
 
-export default App;
+export default App

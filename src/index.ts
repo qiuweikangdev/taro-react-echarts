@@ -1,5 +1,12 @@
 import Echarts from './components/echarts'
 
-export type { EChartsProps, Opts, InitEchart, EChartsInstance } from './components/echarts/types'
+export type {
+  Opts,
+  InitEchart,
+  EChartsProps,
+  EChartOption,
+  EChartsInstance,
+  EChartsLoadingOption,
+} from './components/echarts/types'
 
 export default Echarts
