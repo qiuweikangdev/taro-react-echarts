@@ -51,12 +51,11 @@ import Echarts from 'taro-react-echarts'
 # 使用
 
 ```js
-import Echarts from 'taro-react-echarts';
+import Echarts, { EChartOption } from 'taro-react-echarts';
 import echarts from '@/assets/js/echarts.js'
 
 export default function Demo() {
-
- const option = {
+ const option: EChartOption = {
     legend: {
       top: 50,
       left: 'center',
