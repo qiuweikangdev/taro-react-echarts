@@ -1,12 +1,12 @@
 import Taro, { nextTick, useReady } from '@tarojs/taro'
 import { Canvas } from '@tarojs/components'
-import { useRef, useState, useMemo, FC, memo } from 'react'
-import { isString, isFunction, isEqual, pick, uniqueId, compareVersion } from './utils'
+import { useRef, useState, useMemo, FC, memo, useEffect } from 'react'
+import { isString, isFunction, isEqual, pick, uniqueId, compareVersion, tripleDefer } from './utils'
 import WxCanvas from './wx-canvas'
 import { usePrevious, useUnMount, useUpdateEffect } from '../../hooks'
 import { EChartsProps, InitEchart } from './types'
 
-const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) => {
+const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId, ...props }) => {
   const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>(null)
   const [isInitialResize, setIsInitialResize] = useState<boolean>(true)
   const prevProps = usePrevious<EChartsProps>(props)
@@ -35,10 +35,21 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
    * 获取小程序渲染层的节点要在 onReady 生命周期，等同于 useReady hooks
    */
   useReady(() => {
-    nextTick(() => {
-      initChart()
-    })
+    // 顶层页面级别才触发useReady 【注意Popup 、Dialog 等弹出层 都不是页面级别】
+    if (isPage) {
+      nextTick(() => {
+        initChart()
+      })
+    }
   })
+
+  useEffect(() => {
+    tripleDefer(() => {
+      nextTick(() => {
+        initChart()
+      })
+    })
+  }, [])
 
   useUnMount(() => {
     dispose()
@@ -208,7 +219,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
           })
           canvasRef.current = canvas as any
           renderEcharts({
-            dom: (canvas as unknown) as HTMLDivElement | HTMLCanvasElement,
+            dom: canvas as unknown as HTMLDivElement | HTMLCanvasElement,
             width,
             height,
             devicePixelRatio: canvasDpr,
@@ -220,8 +231,9 @@ const Echarts: FC<EChartsProps> = ({ echarts, canvasId: pCanvasId, ...props }) =
   // 初始化图表
   const initChart = () => {
     if (Taro.getEnv() === Taro.ENV_TYPE.WEB && canvasRef.current) {
-      const width = canvasRef.current?.clientWidth
-      const height = canvasRef.current?.clientHeight
+      const width =
+        canvasRef.current?.clientWidth || props.style?.width || Taro.getSystemInfoSync().windowWidth
+      const height = canvasRef.current?.clientHeight || props.style?.height || 300
       renderEcharts({
         dom: canvasRef.current,
         width,

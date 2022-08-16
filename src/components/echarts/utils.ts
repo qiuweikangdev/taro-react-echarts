@@ -28,7 +28,7 @@ export function isEqual(x, y) {
 
 export function pick(obj = {}, keys) {
   const r = {}
-  keys.forEach(key => {
+  keys.forEach((key) => {
     r[key] = obj[key]
   })
   return r
@@ -71,4 +71,8 @@ export function compareVersion(v1, v2) {
     }
   }
   return 0
+}
+
+export function tripleDefer(func: () => void): void {
+  setTimeout(() => setTimeout(() => setTimeout(() => func())))
 }
