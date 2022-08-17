@@ -41,7 +41,7 @@ import Echarts from 'taro-react-echarts'
 | `loadingOption` | 参考[loading配置项](https://echarts.apache.org/zh/api.html#echartsInstance.showLoading) | object  | 否   |                   |
 | `opts`          | 参考[echarts. init](https://echarts.apache.org/zh/api.html#echarts.init) | string  | 否   |                   |
 | `onEvents`      | 绑定 echarts 事件                                            | object  | 否   |                   |
-| `isPage`        | 表示是否是顶层页面级别 【注意Popup 、Dialog 等弹出层 都不是页面级别】 | boolean | 否   | true              |
+| `isPage`        | 表示是否是顶层页面级别 【注意Popup 、Dialog 等弹出层 都不是页面级别，需要设置为false，否则会造成重复渲染】 | boolean | 否   | true              |
 
 ## Events
 

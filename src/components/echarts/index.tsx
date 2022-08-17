@@ -44,11 +44,13 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
   })
 
   useEffect(() => {
-    tripleDefer(() => {
-      nextTick(() => {
-        initChart()
+    if (!isPage) {
+      tripleDefer(() => {
+        nextTick(() => {
+          initChart()
+        })
       })
-    })
+    }
   }, [])
 
   useUnMount(() => {
