@@ -234,8 +234,8 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
   const initChart = () => {
     if (Taro.getEnv() === Taro.ENV_TYPE.WEB && canvasRef.current) {
       const width =
-        canvasRef.current?.clientWidth || props.style?.width || Taro.getSystemInfoSync().windowWidth
-      const height = canvasRef.current?.clientHeight || props.style?.height || 300
+        props.style?.width || canvasRef.current?.clientWidth || Taro.getSystemInfoSync().windowWidth
+      const height = props.style?.height || canvasRef.current?.clientHeight || 300
       renderEcharts({
         dom: canvasRef.current,
         width,
