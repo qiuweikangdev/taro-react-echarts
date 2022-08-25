@@ -223,7 +223,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
           })
           canvasRef.current = canvas as any
           renderEcharts({
-            dom: (canvas as unknown) as HTMLDivElement | HTMLCanvasElement,
+            dom: canvas as unknown as HTMLDivElement | HTMLCanvasElement,
             width,
             height,
             devicePixelRatio: canvasDpr,
