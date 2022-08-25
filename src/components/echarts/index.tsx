@@ -196,7 +196,9 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
 
   // 销毁echarts实例
   const dispose = () => {
-    echarts?.dispose(canvasRef.current)
+    if (canvasRef.current) {
+      echarts?.dispose(canvasRef.current)
+    }
   }
 
   // 初始化微信小程序图表
@@ -221,7 +223,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
           })
           canvasRef.current = canvas as any
           renderEcharts({
-            dom: canvas as unknown as HTMLDivElement | HTMLCanvasElement,
+            dom: (canvas as unknown) as HTMLDivElement | HTMLCanvasElement,
             width,
             height,
             devicePixelRatio: canvasDpr,
