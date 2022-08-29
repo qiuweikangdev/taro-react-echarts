@@ -33,6 +33,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
   /**
    * issues: https://github.com/NervJS/taro/issues/7116
    * 获取小程序渲染层的节点要在 onReady 生命周期，等同于 useReady hooks
+   * 访问小程序渲染层的 DOM 节点。
    */
   useReady(() => {
     // 顶层页面级别才触发useReady 【注意Popup 、Dialog 等弹出层 都不是页面级别】
@@ -58,23 +59,24 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
   })
 
   useUpdateEffect(() => {
-    const pickKeys = [
-      'theme',
-      'option',
-      'onEvents',
-      'notMerge',
-      'lazyUpdate',
-      'showLoading',
-      'loadingOption',
-    ]
-    if (!isEqual(pick(props, pickKeys), pick(prevProps, pickKeys))) {
-      // 需要销毁后重新实例化
+    if (
+      !isEqual(prevProps?.theme, props.theme) ||
+      !isEqual(prevProps?.opts, props.opts) ||
+      !isEqual(prevProps?.onEvents, props.onEvents)
+    ) {
       dispose()
-      initChart()
+      initChart() // re-render
+      return
+    }
+
+    // update
+    const pickKeys = ['option', 'notMerge', 'lazyUpdate', 'showLoading', 'loadingOption']
+    if (!isEqual(pick(props, pickKeys), pick(prevProps, pickKeys))) {
+      updateEChartsOption()
     }
 
     /**
-     * 当样式和类发生变化
+     * resize: style 、className
      */
     if (
       !isEqual(prevProps?.style, props.style) ||
@@ -133,7 +135,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     })
   }
 
-  const updateEChartsOption = ({ dom }: Pick<InitEchart, 'dom'>) => {
+  const updateEChartsOption = () => {
     /**
      *  官方文档：https://echarts.apache.org/zh/api.html#echartsInstance.setOption
      */
@@ -145,7 +147,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
       loadingOption = null,
     } = props
     // 1. 获取echarts实例
-    const echartInstance = echarts.getInstanceByDom(dom)
+    const echartInstance = echarts.getInstanceByDom(canvasRef.current)
     if (echartInstance) {
       // 2. 设置option
       echartInstance.setOption(option, notMerge, lazyUpdate)
@@ -185,9 +187,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
       devicePixelRatio,
     })
     // 2. 更新echarts实例
-    const echartsInstance = updateEChartsOption({
-      dom,
-    })
+    const echartsInstance = updateEChartsOption()
     // 3. 绑定事件
     bindEvents(echartsInstance, onEvents || {})
     // 4. 图表渲染完成
