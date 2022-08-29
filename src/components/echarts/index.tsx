@@ -103,34 +103,38 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     setIsInitialResize(false)
   }
 
-  const initEchartsInstance = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
+  const initEchartsInstance = async ({ width, height, devicePixelRatio }: InitEchart) => {
     const { theme, opts } = props
-    return new Promise((resolve) => {
-      const charts = echarts.init(dom, theme, {
-        width,
-        height,
-        devicePixelRatio,
-        ...opts,
-      })
-      if (Taro.getEnv() === Taro.ENV_TYPE.WEB) {
-        /**
-         * echart同一个dom下多次动态渲染值，防止值、事件重复互相影响
-         * 每次init之后，先dispose释放下资源，再重新init
-         */
-        const echartsInstance = echarts.getInstanceByDom(dom)
-        echartsInstance.on('finished', () => {
-          echarts.dispose(dom)
-          // 获取渲染后的width、height
-          const newOpts = {
-            width,
-            height,
-            devicePixelRatio,
-            ...opts,
-          }
-          resolve(echarts.init(dom, theme, newOpts))
+    return new Promise((resolve, reject) => {
+      if (canvasRef.current) {
+        const charts = echarts.init(canvasRef.current, theme, {
+          width,
+          height,
+          devicePixelRatio,
+          ...opts,
         })
+        if (Taro.getEnv() === Taro.ENV_TYPE.WEB) {
+          /**
+           * echart同一个dom下多次动态渲染值，防止值、事件重复互相影响
+           * 每次init之后，先dispose释放下资源，再重新init
+           */
+          const echartsInstance = echarts.getInstanceByDom(canvasRef.current)
+          echartsInstance.on('finished', () => {
+            echarts.dispose(canvasRef.current)
+            // 获取渲染后的width、height
+            const newOpts = {
+              width,
+              height,
+              devicePixelRatio,
+              ...opts,
+            }
+            resolve(echarts.init(canvasRef.current, theme, newOpts))
+          })
+        } else {
+          resolve(charts)
+        }
       } else {
-        resolve(charts)
+        reject(null)
       }
     })
   }
@@ -177,11 +181,10 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
   }
 
   // 渲染图表
-  const renderEcharts = async ({ dom, width, height, devicePixelRatio }: InitEchart) => {
+  const renderEcharts = async ({ width, height, devicePixelRatio }: InitEchart) => {
     const { onEvents, onChartReady } = props
     // 1. 初始化图表
     await initEchartsInstance({
-      dom,
       width,
       height,
       devicePixelRatio,
@@ -194,8 +197,8 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     if (isFunction(onChartReady)) onChartReady?.(echartsInstance)
 
     // 5. resize
-    if (dom) {
-      resize(dom)
+    if (canvasRef.current) {
+      resize(canvasRef.current)
     }
   }
 
@@ -228,7 +231,6 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
           })
           canvasRef.current = canvas as any
           renderEcharts({
-            dom: canvas as unknown as HTMLDivElement | HTMLCanvasElement,
             width,
             height,
             devicePixelRatio: canvasDpr,
@@ -244,7 +246,6 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
         props.style?.width || canvasRef.current?.clientWidth || Taro.getSystemInfoSync().windowWidth
       const height = props.style?.height || canvasRef.current?.clientHeight || 300
       renderEcharts({
-        dom: canvasRef.current,
         width,
         height,
         devicePixelRatio: window.devicePixelRatio,

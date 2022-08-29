@@ -32,7 +32,6 @@ export type EChartsProps = Omit<CanvasProps, 'style'> & {
 }
 
 export type InitEchart = {
-  dom: HTMLDivElement | HTMLCanvasElement
   devicePixelRatio: number | undefined
   width: number | string | undefined
   height: number | string | undefined
