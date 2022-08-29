@@ -1,5 +1,5 @@
 import Taro, { nextTick, useReady } from '@tarojs/taro'
-import { Canvas } from '@tarojs/components'
+import { Canvas, View } from '@tarojs/components'
 import { useRef, useState, useMemo, FC, memo, useEffect } from 'react'
 import { isString, isFunction, isEqual, pick, uniqueId, compareVersion, tripleDefer } from './utils'
 import WxCanvas from './wx-canvas'
@@ -36,7 +36,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
    */
   useReady(() => {
     // 顶层页面级别才触发useReady 【注意Popup 、Dialog 等弹出层 都不是页面级别】
-    if (isPage) {
+    if (Taro.getEnv() === Taro.ENV_TYPE.WEAPP && isPage) {
       nextTick(() => {
         initChart()
       })
@@ -44,7 +44,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
   })
 
   useEffect(() => {
-    if (!isPage) {
+    if (Taro.getEnv() === Taro.ENV_TYPE.WEB || !isPage) {
       tripleDefer(() => {
         nextTick(() => {
           initChart()
@@ -192,6 +192,11 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     bindEvents(echartsInstance, onEvents || {})
     // 4. 图表渲染完成
     if (isFunction(onChartReady)) onChartReady?.(echartsInstance)
+
+    // 5. resize
+    if (dom) {
+      resize(dom)
+    }
   }
 
   // 销毁echarts实例
@@ -257,19 +262,37 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     }
   }
 
-  return (
-    <Canvas
-      type='2d'
-      id={canvasId}
-      canvasId={canvasId}
-      style={{
-        width: '100%',
-        height: '300px',
-        ...props.style,
-      }}
-      ref={canvasRef}
-      {...pick(props, canvasProps)}
-    />
-  )
+  // container component
+  const renderContainerComponent = useMemo(() => {
+    if (Taro.getEnv() === Taro.ENV_TYPE.WEAPP) {
+      return (
+        <Canvas
+          type='2d'
+          id={canvasId}
+          canvasId={canvasId}
+          style={{
+            width: '100%',
+            height: '300px',
+            ...props.style,
+          }}
+          ref={canvasRef}
+          {...pick(props, canvasProps)}
+        />
+      )
+    }
+    return (
+      <View
+        ref={canvasRef}
+        id={canvasId}
+        style={{
+          width: '100%',
+          height: '300px',
+          ...props.style,
+        }}
+      />
+    )
+  }, [props, canvasProps, canvasId])
+
+  return renderContainerComponent
 }
 export default memo(Echarts)
