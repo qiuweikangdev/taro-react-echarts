@@ -28,7 +28,7 @@ import Echarts from 'taro-react-echarts'
 
 | 参数            | 描述                                                         | 类型    | 必传 | 默认值            |
 | --------------- | ------------------------------------------------------------ | ------- | ---- | ----------------- |
-| 本身参数        | 参考[Canvas](https://taro-docs.jd.com/taro/docs/components/canvas/) |         |      |                   |
+| 本身参数        | 参考[Canvas](https://taro-docs.jd.com/taro/docs/components/canvas/) 【微信小程序】 |         |      |                   |
 | `echarts`       | echarts对象，可[自定义构建](https://echarts.apache.org/zh/builder.html) | echarts | 是   |                   |
 | `option`        | 参考[setOption](https://echarts.apache.org/zh/option.html#title) | object  | 是   |                   |
 | `className`     | echarts类名                                                  | string  | 否   | `key`             |

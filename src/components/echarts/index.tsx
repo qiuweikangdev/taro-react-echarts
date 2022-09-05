@@ -4,10 +4,12 @@ import { useRef, useState, useMemo, FC, memo, useEffect } from 'react'
 import { isString, isFunction, isEqual, pick, uniqueId, compareVersion, tripleDefer } from './utils'
 import WxCanvas from './wx-canvas'
 import { usePrevious, useUnMount, useUpdateEffect } from '../../hooks'
-import { EChartsProps, InitEchart } from './types'
+import { EChartsProps, InitEchart, EChartsInstance } from './types'
+import { touchEnd, touchMove, touchStart } from './ec-canvas'
 
 const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId, ...props }) => {
-  const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>(null)
+  const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>()
+  const chartRef = useRef<EChartsInstance>()
   const [isInitialResize, setIsInitialResize] = useState<boolean>(true)
   const prevProps = usePrevious<EChartsProps>(props)
   const canvasId = useMemo(() => pCanvasId || uniqueId('canvas_'), [pCanvasId])
@@ -15,9 +17,6 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     () => [
       'disableScroll',
       'disableScroll',
-      'onTouchStart',
-      'onTouchMove',
-      'onTouchEnd',
       'onTouchCancel',
       'onLongTap',
       'onError',
@@ -107,7 +106,7 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     const { theme, opts } = props
     return new Promise((resolve, reject) => {
       if (canvasRef.current) {
-        const charts = echarts.init(canvasRef.current, theme, {
+        chartRef.current = echarts.init(canvasRef.current, theme, {
           width,
           height,
           devicePixelRatio,
@@ -128,10 +127,11 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
               devicePixelRatio,
               ...opts,
             }
-            resolve(echarts.init(canvasRef.current, theme, newOpts))
+            chartRef.current = echarts.init(canvasRef.current, theme, newOpts)
+            resolve(chartRef.current)
           })
         } else {
-          resolve(charts)
+          resolve(chartRef.current)
         }
       } else {
         reject(null)
@@ -277,6 +277,9 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
             ...props.style,
           }}
           ref={canvasRef}
+          onTouchStart={(event) => touchStart({ chart: chartRef.current, event })}
+          onTouchMove={(event) => touchMove({ chart: chartRef.current, event })}
+          onTouchEnd={(event) => touchEnd({ chart: chartRef.current, event })}
           {...pick(props, canvasProps)}
         />
       )
