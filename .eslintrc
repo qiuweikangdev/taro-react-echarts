@@ -23,6 +23,8 @@
     "react/self-closing-comp": ["error"],
     "react/jsx-uses-react": "off",
     "quotes": ["error", "single"],
-    "jsx-quotes": ["error", "prefer-single"]
+    "jsx-quotes": ["error", "prefer-single"],
+    "no-empty-function": 0,
+    "@typescript-eslint/no-empty-function": 0
   }
 }
