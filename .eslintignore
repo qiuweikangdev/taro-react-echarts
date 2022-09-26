@@ -1,0 +1,6 @@
+packages/**/*.md
+scripts/**/*.js
+scripts
+weapp
+echarts.js
+commitlint.config.js
