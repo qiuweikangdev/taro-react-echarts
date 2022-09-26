@@ -1,0 +1,20 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "dev:h5": {
+      "outputs": ["dist/**"]
+    },
+    "dev:weapp": {
+      "outputs": ["dist/**"]
+    },
+    "build:echarts": {
+      "outputs": ["dist/**"]
+    },
+    "publish:echarts": {
+      "dependsOn": ["build:echarts"]
+    },
+    "publish": {
+      "dependsOn": ["publish:echarts"]
+    }
+  }
+}
