@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "noUnusedParameters": false,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "rootDir": "src",  
+    "jsx": "react-jsx",
+    "typeRoots": [
+      "node_modules/@types",
+      "global.d.ts"
+    ],
+   
+  },
+  "compileOnSave": false,
+  "exclude": [
+    "node_modules/**/*",
+    "dist/*",
+  ],
+  "include": [
+    "src/**/*"
+  ],
+}
