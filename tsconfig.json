@@ -1,10 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "es2015",
+    "target": "ESNext",
+    "module": "ESNext",
     "declaration": true,
-    "declarationDir": "dist",
-    "outDir": "dist",
     "removeComments": false,
     "preserveConstEnums": true,
     "moduleResolution": "node",
@@ -17,27 +15,19 @@
     "strictNullChecks": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "baseUrl": "src",
-    "rootDir": "src",  // 用来控制输出的目录结构 --outDir。
     "jsx": "react-jsx",
     "typeRoots": [
       "node_modules/@types",
       "global.d.ts"
     ],
-    "paths": {
-      "@/types/*": ["./@types/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/pages/*": ["./src/pages/*"],
-    }
+
   },
-  "compileOnSave": false,
+  "compileOnSave": true,
   "exclude": [
     "node_modules/**/*",
-    "dist/*",
-    "src/app.ts",
-    "src/app.config.ts"
+    "dist/*"
   ],
   "include": [
-    "src/**/*"
+    "packages/**/*"
   ],
 }
