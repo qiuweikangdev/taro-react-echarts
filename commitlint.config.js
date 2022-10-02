@@ -26,6 +26,7 @@ module.exports = {
     ],
   },
   prompt: {
+    typesAppend: [{ value: 'release', name: 'release:  release version' }],
     scopes: [...components],
     allowCustomIssuePrefixs: false,
     allowEmptyIssuePrefixs: false,
