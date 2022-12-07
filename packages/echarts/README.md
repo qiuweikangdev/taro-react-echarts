@@ -45,17 +45,19 @@ import Echarts from 'taro-react-echarts'
 
 ## Events
 
-| 事件名            | 描述                             | 类型       | 必传  | 默认值 |
-| -------------- | ------------------------------ | -------- | --- | --- |
-| `onChartReady` | 当图表准备好时，将使用 echarts 对象作为参数回调函数 | Function | 否   |     |
+| 事件名         | 描述                                                | 类型     | 必传 | 默认值 |
+| -------------- | --------------------------------------------------- | -------- | ---- | ------ |
+| `onChartReady` | 当图表准备好时，将使用 echarts 对象作为参数回调函数 | Function | 否   |        |
 
 # 使用
 
 ```js
-import Echarts, { EChartOption } from 'taro-react-echarts';
+import { useRef } from 'react'
+import Echarts, { EChartOption, EchartsHandle } from 'taro-react-echarts'
 import echarts from '@/assets/js/echarts.js'
 
 export default function Demo() {
+ const echartsRef = useRef<EchartsHandle>(null)
  const option: EChartOption = {
     legend: {
       top: 50,
@@ -86,6 +88,7 @@ export default function Demo() {
       <Echarts
         echarts={echarts}
         option={option}
+        ref={echartsRef}
       ></Echarts>
   );
 }
@@ -96,3 +99,4 @@ export default function Demo() {
 | 项目                                                         | 描述                                             |
 | ------------------------------------------------------------ | ------------------------------------------------ |
 | [taro-react-table](https://github.com/qiuweikangdev/taro-react-table) | 基于 taro3、react 的 H5 和微信小程序多端表格组件 |
+

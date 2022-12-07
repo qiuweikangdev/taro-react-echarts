@@ -1,8 +1,10 @@
-import Echarts, { EChartOption } from 'taro-react-echarts'
+import { useRef } from 'react'
+import Echarts, { EChartOption, EchartsHandle } from 'taro-react-echarts'
 import echarts from '../../assets/js/echarts'
 import './index.less'
 
 export default function Demo() {
+  const echartsRef = useRef<EchartsHandle>(null)
   const option: EChartOption = {
     legend: {
       top: 50,
@@ -29,5 +31,5 @@ export default function Demo() {
     ],
   }
 
-  return <Echarts echarts={echarts} option={option} />
+  return <Echarts echarts={echarts} option={option} ref={echartsRef} />
 }
