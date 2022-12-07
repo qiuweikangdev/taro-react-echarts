@@ -1,13 +1,26 @@
 import Taro, { nextTick, useReady } from '@tarojs/taro'
 import { Canvas, View } from '@tarojs/components'
-import { useRef, useState, useMemo, FC, memo, useEffect, CSSProperties } from 'react'
+import {
+  useRef,
+  useState,
+  useMemo,
+  memo,
+  useEffect,
+  CSSProperties,
+  ForwardRefRenderFunction,
+  forwardRef,
+  useImperativeHandle,
+} from 'react'
 import { isString, isFunction, isEqual, pick, uniqueId, compareVersion, tripleDefer } from './utils'
 import WxCanvas from '../weapp/wx-canvas'
 import { touchEnd, touchMove, touchStart } from '../weapp/wx-touch'
 import { usePrevious, useUnMount, useUpdateEffect } from '../hooks'
-import { EChartsProps, InitEchart, EChartsInstance } from './types'
+import { EChartsProps, InitEchart, EChartsInstance, EchartsHandle } from './types'
 
-const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId, ...props }) => {
+const Echarts: ForwardRefRenderFunction<EchartsHandle, EChartsProps> = (
+  { echarts, isPage = true, canvasId: pCanvasId, ...props },
+  ref,
+) => {
   const canvasRef = useRef<HTMLDivElement | HTMLCanvasElement | null>()
   const chartRef = useRef<EChartsInstance>()
   const [isInitialResize, setIsInitialResize] = useState<boolean>(true)
@@ -270,6 +283,8 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
     }
   }
 
+  useImperativeHandle(ref, () => ({ chartRef, canvasRef }))
+
   // container component
   const renderContainerComponent = useMemo(() => {
     if (Taro.getEnv() === Taro.ENV_TYPE.WEAPP) {
@@ -293,4 +308,4 @@ const Echarts: FC<EChartsProps> = ({ echarts, isPage = true, canvasId: pCanvasId
   return renderContainerComponent
 }
 
-export default memo(Echarts)
+export default memo(forwardRef(Echarts))

@@ -5,6 +5,7 @@ export type {
   EChartOption,
   EChartsInstance,
   EChartsLoadingOption,
+  EchartsHandle,
 } from './core/types'
 
 export default Echarts

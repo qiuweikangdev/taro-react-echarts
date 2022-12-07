@@ -1,6 +1,6 @@
 import { CanvasProps } from '@tarojs/components/types/Canvas'
 import { EChartOption, EChartsLoadingOption, ECharts } from 'echarts'
-import { CSSProperties } from 'react'
+import { CSSProperties, MutableRefObject } from 'react'
 export type { EChartOption, ECharts as EChartsInstance, EChartsLoadingOption } from 'echarts'
 
 export type Opts = {
@@ -33,4 +33,9 @@ export type InitEchart = {
   devicePixelRatio: number | undefined
   width: number | string | undefined
   height: number | string | undefined
+}
+
+export type EchartsHandle = {
+  canvasRef: Partial<MutableRefObject<HTMLDivElement | HTMLCanvasElement | null>>
+  chartRef: Partial<MutableRefObject<ECharts>>
 }
