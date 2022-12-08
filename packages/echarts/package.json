@@ -1,6 +1,6 @@
 {
   "name": "taro-react-echarts",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "taro图表",
   "scripts": {
     "build:echarts": "rimraf dist && rollup --config ./rollup.config.js",
@@ -17,8 +17,8 @@
   ],
   "author": "qiuweikang",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "main": "dist/index.js",
