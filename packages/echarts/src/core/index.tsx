@@ -225,8 +225,8 @@ const Echarts: ForwardRefRenderFunction<EchartsHandle, EChartsProps> = (
 
   // 销毁echarts实例
   const dispose = () => {
-    if (canvasRef.current) {
-      echarts?.dispose(canvasRef.current)
+    if (chartRef.current) {
+      echarts?.dispose(chartRef.current)
     }
   }
 
