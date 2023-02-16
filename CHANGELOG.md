@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/qiuweikangdev/taro-react-echarts/compare/taro-react-echarts-v1.2.0...taro-react-echarts-v1.2.2) (2023-02-16)
+
+### Bug Fixes
+
+- **echarts:** dispose echarts instance [#18](https://github.com/qiuweikangdev/taro-react-echarts/issues/18) ([a469d3e](https://github.com/qiuweikangdev/taro-react-echarts/commit/a469d3eed8b996c677df77e2900c769faed0eb90))
+- removeEventListener 报错问题 #issue-23 ([7653032](https://github.com/qiuweikangdev/taro-react-echarts/commit/76530327061e43b95c23b1a7392b1727d4969941)), closes [#issue-23](https://github.com/qiuweikangdev/taro-react-echarts/issues/issue-23)
+
+### release version
+
+- 1.2.1 ([cdf94c1](https://github.com/qiuweikangdev/taro-react-echarts/commit/cdf94c190c9798272bdfebc54bec74d1490304f0))
+
 ### [1.2.1](https://github.com/qiuweikangdev/taro-react-echarts/compare/taro-react-echarts-v1.2.0...taro-react-echarts-v1.2.1) (2022-12-08)
 
 ### Bug Fixes

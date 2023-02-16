@@ -1,6 +1,6 @@
 {
   "name": "taro-react-echarts",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "taro图表",
   "scripts": {
     "build:echarts": "rimraf dist && rollup --config ./rollup.config.js",
