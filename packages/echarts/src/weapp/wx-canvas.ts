@@ -36,6 +36,10 @@ export default class WxCanvas {
     // noop
   }
 
+  removeEventListener() {
+    // noop
+  }
+
   detachEvent() {
     // noop
   }
