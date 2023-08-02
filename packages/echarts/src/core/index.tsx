@@ -25,6 +25,8 @@ const Echarts: ForwardRefRenderFunction<EchartsHandle, EChartsProps> = (
   const chartRef = useRef<EChartsInstance>()
   const [isInitialResize, setIsInitialResize] = useState<boolean>(true)
   const prevProps = usePrevious<EChartsProps>(props)
+  const option = useRef(props.option)
+  option.current = props.option
   const canvasId = useMemo(() => pCanvasId || uniqueId('canvas_'), [pCanvasId])
   const canvasProps = useMemo(
     () => [
@@ -165,7 +167,6 @@ const Echarts: ForwardRefRenderFunction<EchartsHandle, EChartsProps> = (
      *  官方文档：https://echarts.apache.org/zh/api.html#echartsInstance.setOption
      */
     const {
-      option,
       notMerge = true, // 不跟之前设置的option合并，保证每次渲染都是最新的option
       lazyUpdate = false, // 设置完 option 后是否不立即更新图表，默认为 false，即同步立即更新。如果为 true，则会在下一个 animation frame 中，才更新图表
       showLoading,
@@ -175,7 +176,7 @@ const Echarts: ForwardRefRenderFunction<EchartsHandle, EChartsProps> = (
     const echartInstance = echarts.getInstanceByDom(canvasRef.current)
     if (echartInstance) {
       // 2. 设置option
-      echartInstance.setOption(option, notMerge, lazyUpdate)
+      echartInstance.setOption(option.current, notMerge, lazyUpdate)
       // 3. 显示加载动画效果
       if (showLoading) echartInstance.showLoading(loadingOption)
       else echartInstance.hideLoading()
