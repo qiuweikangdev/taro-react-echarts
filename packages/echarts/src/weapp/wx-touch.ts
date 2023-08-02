@@ -18,13 +18,6 @@ export function touchStart({ chart, event }) {
       stopImmediatePropagation: () => {},
       stopPropagation: () => {},
     })
-    handler.dispatch('mousemove', {
-      zrX: touch.x,
-      zrY: touch.y,
-      preventDefault: () => {},
-      stopImmediatePropagation: () => {},
-      stopPropagation: () => {},
-    })
     handler.processGesture(wrapTouch(event), 'start')
   }
 }
@@ -33,13 +26,6 @@ export function touchMove({ chart, event }) {
   if (chart && event.touches.length > 0) {
     const touch = event.touches[0]
     const handler = chart.getZr().handler
-    handler.dispatch('mousedown', {
-      zrX: touch.x,
-      zrY: touch.y,
-      preventDefault: () => {},
-      stopImmediatePropagation: () => {},
-      stopPropagation: () => {},
-    })
     handler.dispatch('mousemove', {
       zrX: touch.x,
       zrY: touch.y,
